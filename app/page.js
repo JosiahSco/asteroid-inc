@@ -13,19 +13,20 @@ export default function Home() {
     if (savedMoney) {
       setMoney(parseInt(savedMoney));
     }
+    
+    // const saveInterval = setInterval(() => {
+    //   setMoney(prevMoney => prevMoney + moneyPerSecond);
+    //   localStorage.setItem("money", money.toString());
+    // }, 1000);
 
-    const saveInterval = setInterval(() => {
-      localStorage.setItem('money', money.toString());
-    }, 5000);
-
-    return () => clearInterval(saveInterval);
+    // return () => clearInterval(saveInterval);
   }, [])
 
   const handleAsteroidClick = () => {
-    setMoney(money + 1);
+    setMoney(prevMoney => prevMoney + 1);
+    localStorage.setItem('money', (money + 1).toString());
     setRotationDegrees(rotationDegrees + 5);
     document.querySelector('.mainClicker').style.transform = `rotate(${rotationDegrees}deg)`
-    console.log(money);
   }
 
   return (
