@@ -21,6 +21,10 @@
     box-shadow: -47vw -32vh 2px 3px #fff,-4vw -49vh 2px 0px #fff,18vw 49vh 1px 1px #fff,39vw -22vh 2px 3px #fff,42vw -49vh 3px 3px #fff,31vw -45vh 3px 0px #fff,-5vw -50vh 1px 0px #fff,-3vw -46vh 3px 3px #fff,24vw 40vh 2px 0px #fff,-4vw 16vh 2px 1px #fff,13vw -11vh 0px 2px #fff,-45vw -15vh 3px 3px #fff,-11vw 48vh 3px 3px #fff,50vw -13vh 1px 2px #fff,33vw 43vh 1px 3px #fff,-8vw 35vh 1px 0px #fff,38vw 4vh 3px 3px #fff,0vw -19vh 2px 2px #fff,10vw -14vh 2px 2px #fff,24vw -4vh 3px 1px #fff,-17vw -19vh 2px 0px #fff,34vw -24vh 3px 3px #fff,22vw 4vh 2px 0px #fff,3vw -19vh 0px 1px #fff,41vw -39vh 3px 1px #fff,-6vw -8vh 0px 2px #fff,46vw 45vh 2px 1px #fff,22vw -1vh 2px 3px #fff,13vw 35vh 0px 1px #fff,-7vw 26vh 0px 0px #fff,47vw -46vh 1px 3px #fff,-1vw 14vh 3px 0px #fff,-5vw 46vh 1px 1px #fff,-43vw -41vh 1px 2px #fff,-1vw -30vh 2px 3px #fff,28vw -33vh 2px 2px #fff,-18vw 22vh 0px 3px #fff,5vw 3vh 3px 0px #fff,32vw -20vh 2px 3px #fff,-47vw 38vh 2px 1px #fff,-42vw -8vh 2px 3px #fff,30vw -34vh 2px 0px #fff,-33vw 20vh 1px 1px #fff,-48vw -26vh 2px 3px #fff,-42vw 33vh 1px 2px #fff,-17vw -38vh 1px 1px #fff,-2vw -29vh 0px 0px #fff,30vw -5vh 2px 3px #fff,-4vw -1vh 0px 3px #fff,10vw 28vh 3px 2px #fff,-30vw -14vh 1px 1px #fff,-43vw 49vh 1px 1px #fff,14vw 22vh 1px 0px #fff,25vw -31vh 3px 0px #fff,-49vw 3vh 3px 2px #fff,9vw 19vh 3px 3px #fff,-9vw -48vh 0px 1px #fff,9vw 11vh 3px 3px #fff,22vw 22vh 3px 1px #fff,-22vw -31vh 0px 3px #fff,-41vw 35vh 2px 3px #fff,-42vw -22vh 1px 2px #fff,40vw -14vh 0px 0px #fff,22vw -10vh 1px 0px #fff,-32vw -17vh 0px 3px #fff,14vw -25vh 2px 1px #fff,36vw 35vh 0px 2px #fff,-39vw 18vh 1px 2px #fff,-23vw 25vh 1px 0px #fff,38vw -49vh 3px 1px #fff,-33vw -20vh 1px 2px #fff,40vw -32vh 1px 2px #fff,-22vw -9vh 2px 1px #fff,45vw -5vh 1px 0px #fff,27vw 19vh 1px 3px #fff,11vw 18vh 1px 0px #fff,22vw 16vh 1px 2px #fff,34vw 8vh 1px 1px #fff,-8vw -4vh 1px 0px #fff,33vw 11vh 1px 3px #fff,-11vw 41vh 2px 1px #fff,48vw -39vh 2px 3px #fff,33vw 24vh 0px 1px #fff,4vw -30vh 2px 0px #fff,-41vw 38vh 1px 3px #fff,31vw 10vh 0px 3px #fff,-30vw -26vh 0px 2px #fff,17vw 32vh 3px 0px #fff,-27vw 26vh 3px 2px #fff,-50vw 49vh 3px 2px #fff,-28vw 33vh 1px 3px #fff,-18vw -39vh 3px 0px #fff,46vw -3vh 0px 2px #fff,19vw 21vh 1px 0px #fff,43vw 42vh 0px 0px #fff,-33vw 36vh 2px 2px #fff,-35vw 16vh 0px 0px #fff,-16vw 47vh 3px 2px #fff,21vw -10vh 3px 1px #fff,-13vw 26vh 0px 1px #fff;
     animation: zoom 15s linear alternate infinite;
 }
+@font-face {
+  font-family: 'SpaceFont';
+  src: url('/space-font.otf') format('opentype');
+}
 
 @keyframes zoom {
   0%{
@@ -63,7 +67,8 @@
 .left p {
   font-size: 64px;
   margin: 10px;
-  font-family: fantasy;
+  font-family: 'SpaceFont';
+  color: darkslateblue;
 }
 
 @media only screen and (max-width: 768px) {
