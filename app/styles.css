@@ -75,6 +75,10 @@
   color: darkslateblue;
 }
 
+.right p {
+  color: white;
+}
+
 .upgrade {
   font-family: 'SpaceFont';
   background-color: darkslateblue;
