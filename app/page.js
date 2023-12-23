@@ -57,6 +57,8 @@ export default function Home() {
   }
 
   const handleUpgradePurchase = (upgrade) => {
+    if (upgrade.cost - money > 0) return;
+
     setMoney(money - upgrade.cost);
     localStorage.setItem('money', money.toString());
 
