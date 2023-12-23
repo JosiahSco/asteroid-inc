@@ -48,10 +48,14 @@
 
 .right {
   z-index: 1;
-  min-width: 400px;
+  min-width: 625px;
   width: 50%;
   min-height: 100vh;
-  /* background-color: blue; */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .mainClicker {
@@ -71,6 +75,15 @@
   color: darkslateblue;
 }
 
+.upgrade {
+  font-family: 'SpaceFont';
+  background-color: darkslateblue;
+  font-size: 26px;
+  width: 600px;
+  padding: 5px;
+  margin: 10px;
+}
+
 @media only screen and (max-width: 768px) {
   .mainClicker img {
     width: 200px;
@@ -82,5 +95,9 @@
 
   .right {
     min-height: auto;
+  }
+
+  .upgrade {
+    width: 350px;
   }
 }
