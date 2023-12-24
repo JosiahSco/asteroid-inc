@@ -4,17 +4,20 @@ import styles from './styles.css'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
+
+  const initialUpgradeState = [
+    { id: 1, name: 'Human Miner', cost: 15, perSecond: 0.1, qty: 0, img: '/human.png'},
+    { id: 2, name: 'Alien Miner', cost: 100, perSecond: 1, qty: 0, img: '/alien.png'},
+    { id: 3, name: 'Space Beast', cost: 1000, perSecond: 10, qty: 0, img: '/space-beast.png', imgWidth: 100},
+    { id: 4, name: 'Nano bot', cost: 5000, perSecond: 75, qty: 0, img: '/nanobot.png', imgWidth: 100},
+    { id: 5, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0, img: '/giant-lazer.png'},
+  ]
+
   let [money, setMoney] = useState(0);
   let [moneyPerSecond, setMoneyPerSecond] = useState(0);
   let [rotationDegrees, setRotationDegrees] = useState(5);
   let [purchasedUpgrades, setPurchasedUpgrades] = useState([]);
-  let [upgrades, setUpgrades] = useState([
-    { id: 1, name: 'Human Miner', cost: 15, perSecond: 0.1, qty: 0, img: '/human.png'},
-    { id: 2, name: 'Alien Miner', cost: 100, perSecond: 1, qty: 0, img: '/alien.png'},
-    { id: 3, name: 'Space Beast', cost: 1000, perSecond: 10, qty: 0, img: '/space-beast.png', imgWidth: 100},
-    { id: 4, name: 'Nanobot', cost: 5000, perSecond: 75, qty: 0, img: '/nanobot.png', imgWidth: 100},
-    { id: 5, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0},
-  ]);
+  let [upgrades, setUpgrades] = useState(initialUpgradeState);
 
   useEffect(() => {
     const savedMoney = localStorage.getItem('money');
@@ -89,6 +92,30 @@ export default function Home() {
 
   }
 
+  const handleReset = () => {
+    console.log('reset')
+    setMoney(() => {
+      localStorage.setItem('money', '0');
+      return 0;
+    });
+
+    setMoneyPerSecond(() => {
+      localStorage.setItem('moneyPerSecond', '0');
+      return 0;
+    });
+
+    setUpgrades(() => {
+      localStorage.setItem('upgrades', JSON.stringify(initialUpgradeState));
+      return [];
+    })
+
+    setPurchasedUpgrades(() => {
+      localStorage.setItem('purchasedUpgrades', '[]');
+      return [];
+    });
+    document.location.reload();
+  }
+
   const unlockedUpgrades = upgrades.filter(upgrade => {
     return purchasedUpgrades.includes(upgrade.id);
   });
@@ -117,6 +144,7 @@ export default function Home() {
       />
      ))}
      </div>
+     <button className='reset' onClick={handleReset}>Reset</button>
     </main>
   )
 }
@@ -125,7 +153,9 @@ const UpgradeButton = ({ upgrade, onClick}) => {
   return (
     <button onClick={onClick} className='upgrade'>
       <img src={upgrade.img} style={{width: `${upgrade.imgWidth}px`}}></img>
-      {upgrade.name} - Cost: {upgrade.cost} | {upgrade.qty}
+      <div>{upgrade.name} </div> /
+      <div>Cost: {upgrade.cost}</div> /
+      <div>Qty: {upgrade.qty}</div>
     </button>
   )
 }
