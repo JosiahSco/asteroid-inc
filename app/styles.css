@@ -103,6 +103,7 @@
 
 .reset {
   z-index: 3;
+  font-family: 'SpaceFont';
   position: absolute;
   bottom: 20px;
   right: 20px;

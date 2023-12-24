@@ -74,8 +74,10 @@ export default function Home() {
       return newMoneyPerSecond;
     });
 
-    setPurchasedUpgrades(prevUpgrades => [...prevUpgrades, upgrade.id]);
-    localStorage.setItem('purchasedUpgrades', JSON.stringify(purchasedUpgrades));
+    setPurchasedUpgrades(prevUpgrades => {
+      localStorage.setItem('purchasedUpgrades', JSON.stringify([...prevUpgrades, upgrade.id]));
+      return [...prevUpgrades, upgrade.id];
+    });
 
     const updatedUpgrades = upgrades.map((u) => {
       if (u.id == upgrade.id) {
@@ -129,11 +131,11 @@ export default function Home() {
     <main className="main">
      <div className="spaceBackground"></div>
      <div className="left">
-      <p>{Math.round(money * 100) / 100}</p>
+      <p>{formatNumber(money)}</p>
       <button className="mainClicker" onClick={handleAsteroidClick}>
         <img src='/asteroid.png' draggable="false"></img>
       </button>
-      <p>{Math.round(moneyPerSecond * 100) / 100}/s</p>
+      <p>{formatNumber(moneyPerSecond)}/s</p>
      </div>
      <div className="right">
       {unlockedUpgrades.map((upgrade) => (
@@ -156,8 +158,34 @@ const UpgradeButton = ({ upgrade, onClick}) => {
     <button onClick={onClick} className='upgrade'>
       <img src={upgrade.img} style={{width: `${upgrade.imgWidth}px`}}></img>
       <div>{upgrade.name} </div> /
-      <div>Cost: {upgrade.cost}</div> /
+      <div>Cost: {formatNumber(upgrade.cost)}</div> /
       <div>Qty: {upgrade.qty}</div>
     </button>
   )
+}
+
+function formatNumber(number) {
+  if (typeof number == 'string') number = parseFloat(number);
+
+  const suffixes = ['', 'K', 'M', 'B', 'T', 'Q'];
+  let suffixIndex = 0;
+  while (number >= 1000 && suffixIndex < suffixes.length - 1) {
+    number /= 1000;
+    suffixIndex++;
+  }
+
+  if (number >= 1) {
+    return number.toFixed(3).replace(/\.?0+$/, '') + suffixes[suffixIndex]
+  } else if (number >= 0.001) {
+    return number.toFixed(3).replace(/\.?0+$/, '') + suffixes[suffixIndex]
+  } else {
+    return 0;
+  }
+  // return number >= 0.001
+  // ? 
+  // : number.toFixed(3) + suffixes[suffixIndex];
+
+  // return number >= 1 
+  // ? number.toFixed(3).replace(/\.?0+$/, '') + suffixes[suffixIndex]
+  // : number.toFixed(0) + suffixes[suffixIndex];
 }
