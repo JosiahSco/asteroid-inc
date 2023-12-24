@@ -136,15 +136,17 @@ export default function Home() {
       <p>{Math.round(moneyPerSecond * 100) / 100}/s</p>
      </div>
      <div className="right">
-     {unlockedUpgrades.map((upgrade) => (
-      <UpgradeButton 
-        key={upgrade.id} 
-        upgrade={upgrade} 
-        onClick={() => handleUpgradePurchase(upgrade)} 
-      />
-     ))}
+      {unlockedUpgrades.map((upgrade) => (
+        <UpgradeButton 
+          key={upgrade.id} 
+          upgrade={upgrade} 
+          onClick={() => handleUpgradePurchase(upgrade)} 
+        />
+      ))}
      </div>
-     <button className='reset' onClick={handleReset}>Reset</button>
+     <div className='footer'>
+      <button className='reset' onClick={handleReset}>Reset</button>
+     </div>
     </main>
   )
 }

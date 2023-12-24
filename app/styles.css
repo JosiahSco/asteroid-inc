@@ -107,8 +107,10 @@
   bottom: 20px;
   right: 20px;
   font-size: 24px;
+  color: white;
   background-color: red;
   padding: 4px;
+  /* margin: 10px; */
   border-radius: 8px;
 }
 
@@ -128,5 +130,18 @@
   .upgrade {
     width: 375px;
     font-size: 15px;
+  }
+
+  .footer {
+    display: flex;
+    min-width: 100%;
+    min-height: 50px;
+    justify-content: end;
+    align-items: end;
+  }
+
+  .reset {
+    position: relative;
+    float: right;
   }
 }
