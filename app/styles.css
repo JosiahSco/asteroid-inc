@@ -76,7 +76,15 @@
 }
 
 .right button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
+  border-radius: 12px;
+}
+
+.right button img {
+  width: 75px;
 }
 
 .upgrade {
@@ -86,6 +94,7 @@
   width: 600px;
   padding: 5px;
   margin: 10px;
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 768px) {

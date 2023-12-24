@@ -9,8 +9,11 @@ export default function Home() {
   let [rotationDegrees, setRotationDegrees] = useState(5);
   let [purchasedUpgrades, setPurchasedUpgrades] = useState([]);
   let [upgrades, setUpgrades] = useState([
-    { id: 1, name: 'Human Miner', cost: 15, perSecond: 0.1, qty: 0},
-    { id: 2, name: 'Robot Miner', cost: 100, perSecond: 1, qty: 0},
+    { id: 1, name: 'Human Miner', cost: 15, perSecond: 0.1, qty: 0, img: '/human.png'},
+    { id: 2, name: 'Alien Miner', cost: 100, perSecond: 1, qty: 0, img: '/alien.png'},
+    { id: 3, name: 'Nanobot', cost: 5000, perSecond: 75, qty: 0, img: '/nanobot.png', imgWidth: 100},
+    { id: 4, name: 'Nanobot', cost: 1000, perSecond: 10, qty: 0},
+    { id: 5, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0},
   ]);
 
   useEffect(() => {
@@ -73,7 +76,7 @@ export default function Home() {
 
     const updatedUpgrades = upgrades.map((u) => {
       if (u.id == upgrade.id) {
-        return { ...u, cost: (u.cost * 1.5).toFixed(1), qty: u.qty + 1 }
+        return { ...u, cost: (u.cost * 1.15).toFixed(1), qty: u.qty + 1 }
       } else {
         return u;
       }
@@ -99,11 +102,11 @@ export default function Home() {
     <main className="main">
      <div className="spaceBackground"></div>
      <div className="left">
-      <p>{money}</p>
+      <p>{Math.round(money * 100) / 100}</p>
       <button className="mainClicker" onClick={handleAsteroidClick}>
         <img src='/asteroid.png' draggable="false"></img>
       </button>
-      <p>{moneyPerSecond}/s</p>
+      <p>{Math.round(moneyPerSecond * 100) / 100}/s</p>
      </div>
      <div className="right">
      {unlockedUpgrades.map((upgrade) => (
@@ -121,6 +124,7 @@ export default function Home() {
 const UpgradeButton = ({ upgrade, onClick}) => {
   return (
     <button onClick={onClick} className='upgrade'>
+      <img src={upgrade.img} style={{width: `${upgrade.imgWidth}px`}}></img>
       {upgrade.name} - Cost: {upgrade.cost} | {upgrade.qty}
     </button>
   )
