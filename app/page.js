@@ -10,14 +10,16 @@ export default function Home() {
     { id: 2, name: 'Alien Miner', cost: 100, perSecond: 1, qty: 0, img: '/alien.png'},
     { id: 3, name: 'Space Beast', cost: 1000, perSecond: 10, qty: 0, img: '/space-beast.png', imgWidth: 100},
     { id: 4, name: 'Nano bot', cost: 5000, perSecond: 75, qty: 0, img: '/nanobot.png', imgWidth: 100},
-    { id: 5, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0, img: '/giant-lazer.png'},
-  ]
+    { id: 5, name: 'Mech Miner', cost: 25_000, perSecond: 200, qty: 0, img: '/mech-miner.png'},
+    { id: 6, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0, img: '/giant-lazer.png'},
+  ];
 
   let [money, setMoney] = useState(0);
   let [moneyPerSecond, setMoneyPerSecond] = useState(0);
   let [rotationDegrees, setRotationDegrees] = useState(5);
   let [purchasedUpgrades, setPurchasedUpgrades] = useState([]);
   let [upgrades, setUpgrades] = useState(initialUpgradeState);
+  let [explosionPosition, setExplosionPosition] = useState(null);
 
   useEffect(() => {
     const savedMoney = localStorage.getItem('money');
@@ -55,12 +57,20 @@ export default function Home() {
     return () => clearInterval(perSecondInterval);
   }, [moneyPerSecond]);
 
-  const handleAsteroidClick = () => {
+  const handleAsteroidClick = (event) => {
     setMoney(prevMoney => prevMoney + 1);
     localStorage.setItem('money', (money + 1).toString());
     setRotationDegrees(rotationDegrees + 5);
     document.querySelector('.mainClicker').style.transform = `rotate(${rotationDegrees}deg)`
-  }
+
+    const x = event.clientX;
+    const y = event.clientY;
+    setExplosionPosition({x, y});
+
+    setTimeout(() => {
+      setExplosionPosition(null);
+    }, 1500);
+  };
 
   const handleUpgradePurchase = (upgrade) => {
     if (upgrade.cost - money > 0) return;
@@ -92,7 +102,7 @@ export default function Home() {
       return updatedUpgrades;
     });
 
-  }
+  };
 
   const handleReset = () => {
     console.log('reset')
@@ -132,6 +142,18 @@ export default function Home() {
      <div className="spaceBackground"></div>
      <div className="left">
       <p>{formatNumber(money)}</p>
+      { explosionPosition && (
+        <img src='/explosion.png' 
+          style={{ 
+            width: '50px', 
+            position: 'absolute', 
+            top: `${explosionPosition.y - 15}px`, 
+            left: `${explosionPosition.x - 20}px`, 
+            zIndex: '10',
+            pointerEvents: 'none',
+          }} 
+        />
+      )}
       <button className="mainClicker" onClick={handleAsteroidClick}>
         <img src='/asteroid.png' draggable="false"></img>
       </button>

@@ -126,6 +126,7 @@
 
   .right {
     min-height: auto;
+    justify-content: flex-start;
   }
 
   .upgrade {
