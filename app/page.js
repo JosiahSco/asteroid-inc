@@ -63,8 +63,8 @@ export default function Home() {
     setRotationDegrees(rotationDegrees + 5);
     document.querySelector('.mainClicker').style.transform = `rotate(${rotationDegrees}deg)`
 
-    const x = event.clientX;
-    const y = event.clientY;
+    const x = event.clientX - 25;
+    const y = event.clientY - 20.55;
     setExplosionPosition({x, y});
 
     setTimeout(() => {
@@ -147,8 +147,8 @@ export default function Home() {
           style={{ 
             width: '50px', 
             position: 'absolute', 
-            top: `${explosionPosition.y - 15}px`, 
-            left: `${explosionPosition.x - 20}px`, 
+            top: `${explosionPosition.y}px`, 
+            left: `${explosionPosition.x}px`, 
             zIndex: '10',
             pointerEvents: 'none',
           }} 
