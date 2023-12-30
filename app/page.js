@@ -78,9 +78,9 @@ export default function Home() {
     let vol = new Tone.Volume(-12).toDestination();
     let synth = new Tone.Synth().connect(vol);
     const compressor = new Tone.Compressor({  
-      ratio: 12, // Adjust the ratio as needed
-      threshold: -24, // Adjust the threshold as needed
-      release: 0.1, // Adjust the release time as needed
+      ratio: 12, 
+      threshold: -24, 
+      release: 0.1, 
       attack: 0.001 
     });
     synth.connect(vol).connect(compressor);
@@ -92,6 +92,10 @@ export default function Home() {
     } else {
       synth.triggerAttackRelease(noncritNotes[noteIndex], "32n");
     }
+
+    setTimeout(() => {
+      synth.dispose();
+    }, 1000)
 
     setTimeout(() => {
       setExplosionPosition(null);
