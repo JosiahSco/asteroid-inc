@@ -176,9 +176,11 @@ export default function Home() {
           onClick={() => handleUpgradePurchase(upgrade)} 
         />
       ))}
+      <div className='resetWrapper'>
+        <button className='reset' onClick={handleReset}>Reset</button>
+      </div>
      </div>
      <div className='footer'>
-      <button className='reset' onClick={handleReset}>Reset</button>
      </div>
     </main>
   )

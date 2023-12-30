@@ -39,7 +39,7 @@
   z-index: 1;
   min-width: 400px;
   width: 50%;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -50,13 +50,14 @@
   z-index: 1;
   min-width: 625px;
   width: 50%;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  /* overflow-y: scroll; */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .mainClicker {
@@ -114,18 +115,24 @@
   cursor: pointer;
 }
 
-.reset {
+.right .reset {
   z-index: 3;
   font-family: 'SpaceFont';
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
   font-size: 24px;
+  height: auto;
   color: white;
   background-color: red;
   padding: 4px;
-  /* margin: 10px; */
   border-radius: 8px;
+  float: inline-end;
+}
+
+.footer {
+  width: 100%;
+}
+
+.resetWrapper {
+  width: 600px;
 }
 
 dialog {
@@ -179,6 +186,8 @@ dialog {
   .right {
     min-height: auto;
     justify-content: flex-start;
+    margin-bottom: 5px;
+    max-height: 330px;
   }
 
   .upgrade {
@@ -190,12 +199,16 @@ dialog {
     display: flex;
     min-width: 100%;
     min-height: 50px;
-    justify-content: end;
-    align-items: end;
+    justify-content: flex-end;
+    align-items: flex-end;
   }
 
-  .reset {
-    position: relative;
-    float: right;
+  .right .reset {
+    font-size: 16px;
   }
+
+  .resetWrapper {
+    width: 375px;
+  }
+
 }
