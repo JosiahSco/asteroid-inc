@@ -47,8 +47,18 @@ export default function Home() {
 
   useEffect(() => {
     const perSecondInterval = setInterval(() => {
+      
       setMoney((prevMoney) =>  {
         let newMoney = Math.round((prevMoney + moneyPerSecond) * 100) / 100;
+        // let minerTypes = document.querySelectorAll('.upgrade');
+        // console.log(minerTypes)
+        // minerTypes.forEach((miner, index) => {
+        //   if (upgrades[index].cost > newMoney) {
+        //     miner.style.backgroundColor = 'grey';
+        //   } else {
+        //     miner.style.backgroundColor = 'darkslateBlue';
+        //   }
+        // });
         localStorage.setItem('money', newMoney.toFixed(1));
         return newMoney;
       });
@@ -128,6 +138,19 @@ export default function Home() {
     document.location.reload();
   }
 
+  useEffect(() => {
+    let minerTypes = document.querySelectorAll('.upgrade');
+    minerTypes.forEach((miner, index) => {
+      if (upgrades[index].cost > money) {
+        miner.style.backgroundColor = '#1e1a37';
+        miner.style.cursor = 'auto';
+      } else {
+        miner.style.backgroundColor = 'darkslateBlue';
+        miner.style.cursor = 'pointer';
+      }
+    })
+  }, [money])
+
   const unlockedUpgrades = upgrades.filter(upgrade => {
     return purchasedUpgrades.includes(upgrade.id);
   });
@@ -151,6 +174,7 @@ export default function Home() {
       <p>To begin, click or tap the asteroid to collect credits</p>
       <p>These credits can be spent on miners. New miner types are unlocked by buying a miner of the previous type.</p>
       <p>These miners collect credits passively for you. Your passive collection rate is displayed below the asteroid.</p>
+      <p>When many miner types are unlocked, you may have to scroll up and down to see them all.</p>
       <p>Happy Mining!</p>
       <button autoFocus onClick={() => document.getElementById('tutorial').close()}>Close</button>
      </dialog>
@@ -176,6 +200,7 @@ export default function Home() {
      <div className="right">
       {unlockedUpgrades.map((upgrade) => (
         <UpgradeButton
+          className='upgrade'
           key={upgrade.id} 
           upgrade={upgrade} 
           onClick={() => handleUpgradePurchase(upgrade)} 
