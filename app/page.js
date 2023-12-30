@@ -23,8 +23,7 @@ export default function Home() {
   let [upgrades, setUpgrades] = useState(initialUpgradeState);
   let [explosionPosition, setExplosionPosition] = useState(null);
 
-  let vol = new Tone.Volume(-12).toDestination();
-  let synth = new Tone.Synth().connect(vol);
+ 
 
   useEffect(() => {
     const savedMoney = localStorage.getItem('money');
@@ -76,14 +75,14 @@ export default function Home() {
     setExplosionPosition({x, y});
 
     await Tone.start();
+    let vol = new Tone.Volume(-12).toDestination();
+    let synth = new Tone.Synth().connect(vol);
     const compressor = new Tone.Compressor({  
       ratio: 12, // Adjust the ratio as needed
       threshold: -24, // Adjust the threshold as needed
       release: 0.1, // Adjust the release time as needed
       attack: 0.001 
     });
-    synth.dispose();
-    synth = new Tone.Synth();
     synth.connect(vol).connect(compressor);
     const critNotes = ["C5", "F5"];
     const noncritNotes = ["C3", "F3"];
