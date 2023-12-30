@@ -170,7 +170,7 @@ export default function Home() {
      </div>
      <div className="right">
       {unlockedUpgrades.map((upgrade) => (
-        <UpgradeButton 
+        <UpgradeButton
           key={upgrade.id} 
           upgrade={upgrade} 
           onClick={() => handleUpgradePurchase(upgrade)} 

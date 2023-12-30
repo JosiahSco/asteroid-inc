@@ -81,6 +81,8 @@
   align-items: center;
   color: white;
   border-radius: 12px;
+  height: 95px;
+
 }
 
 .right button img {
