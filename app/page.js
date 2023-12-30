@@ -8,8 +8,8 @@ export default function Home() {
   const initialUpgradeState = [
     { id: 1, name: 'Human Miner', cost: 15, perSecond: 0.1, qty: 0, img: '/human.png'},
     { id: 2, name: 'Alien Miner', cost: 100, perSecond: 1, qty: 0, img: '/alien.png'},
-    { id: 3, name: 'Space Beast', cost: 1000, perSecond: 10, qty: 0, img: '/space-beast.png', imgWidth: 100},
-    { id: 4, name: 'Nano bot', cost: 5000, perSecond: 75, qty: 0, img: '/nanobot.png', imgWidth: 100},
+    { id: 3, name: 'Space Beast', cost: 1000, perSecond: 10, qty: 0, img: '/space-beast.png'},
+    { id: 4, name: 'Nano bot', cost: 5000, perSecond: 75, qty: 0, img: '/nanobot.png'},
     { id: 5, name: 'Mech Miner', cost: 25_000, perSecond: 200, qty: 0, img: '/mech-miner.png'},
     { id: 6, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0, img: '/giant-lazer.png'},
   ];
@@ -187,9 +187,9 @@ export default function Home() {
 const UpgradeButton = ({ upgrade, onClick}) => {
   return (
     <button onClick={onClick} className='upgrade'>
-      <img src={upgrade.img} style={{width: `${upgrade.imgWidth}px`}}></img>
-      <div>{upgrade.name} </div> /
-      <div>Cost: {formatNumber(upgrade.cost)}</div> /
+      <img src={upgrade.img}></img>
+      <div>{upgrade.name} </div> 
+      <div className='cost'>Cost: {formatNumber(upgrade.cost)}</div> 
       <div>Qty: {upgrade.qty}</div>
     </button>
   )
