@@ -140,6 +140,8 @@ dialog {
 #tutorial button {
   font-size: 16px;
   background-color: darkslateblue;
+  color: white;
+  border: none;
   padding: 4px;
   border-radius: 4px;
   margin: 8px;
@@ -149,6 +151,7 @@ dialog {
 #openTutorial {
   font-size: 24px;
   background-color: darkslateblue;
+  color: white;
   padding: 4px 12px 4px 12px;
   border-radius: 6px;
 }
