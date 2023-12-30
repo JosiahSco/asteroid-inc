@@ -137,6 +137,11 @@ export default function Home() {
     unlockedUpgrades.push(nextUpgrade);
   }
 
+  useEffect(() => {
+    const right = document.querySelector('.right');
+    right.scrollTo({top: right.scrollHeight, behavior: 'smooth'});
+  }, [unlockedUpgrades.length]);
+
   return (
     <main className="main">
      <div className="spaceBackground"></div>
