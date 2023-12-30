@@ -141,6 +141,15 @@ export default function Home() {
     <main className="main">
      <div className="spaceBackground"></div>
      <div className="left">
+     <dialog id='tutorial'>
+      <h3>Tutorial</h3>
+      <p>To begin, click or tap the asteroid to collect credits</p>
+      <p>These credits can be spent on miners. New miner types are unlocked by buying a miner of the previous type.</p>
+      <p>These miners collect credits passively for you. Your passive collection rate is displayed below the asteroid.</p>
+      <p>Happy Mining!</p>
+      <button autoFocus onClick={() => document.getElementById('tutorial').close()}>Close</button>
+     </dialog>
+     <button id='openTutorial' onClick={() => document.getElementById('tutorial').showModal()}>?</button>
       <p>{formatNumber(money)}</p>
       { explosionPosition && (
         <img src='/explosion.png' 
@@ -203,11 +212,4 @@ function formatNumber(number) {
   } else {
     return 0;
   }
-  // return number >= 0.001
-  // ? 
-  // : number.toFixed(3) + suffixes[suffixIndex];
-
-  // return number >= 1 
-  // ? number.toFixed(3).replace(/\.?0+$/, '') + suffixes[suffixIndex]
-  // : number.toFixed(0) + suffixes[suffixIndex];
 }
