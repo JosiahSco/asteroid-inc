@@ -1,6 +1,7 @@
 'use client'
 import Image from 'next/image'
 import styles from './styles.css'
+import * as Tone from 'tone'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
@@ -15,11 +16,15 @@ export default function Home() {
   ];
 
   let [money, setMoney] = useState(0);
+  let [moneyPerClick, setMoneyPerClick] = useState(1);
   let [moneyPerSecond, setMoneyPerSecond] = useState(0);
   let [rotationDegrees, setRotationDegrees] = useState(5);
   let [purchasedUpgrades, setPurchasedUpgrades] = useState([]);
   let [upgrades, setUpgrades] = useState(initialUpgradeState);
   let [explosionPosition, setExplosionPosition] = useState(null);
+
+  let vol = new Tone.Volume(-12).toDestination();
+  let synth = new Tone.Synth().connect(vol);
 
   useEffect(() => {
     const savedMoney = localStorage.getItem('money');
@@ -47,18 +52,8 @@ export default function Home() {
 
   useEffect(() => {
     const perSecondInterval = setInterval(() => {
-      
       setMoney((prevMoney) =>  {
         let newMoney = Math.round((prevMoney + moneyPerSecond) * 100) / 100;
-        // let minerTypes = document.querySelectorAll('.upgrade');
-        // console.log(minerTypes)
-        // minerTypes.forEach((miner, index) => {
-        //   if (upgrades[index].cost > newMoney) {
-        //     miner.style.backgroundColor = 'grey';
-        //   } else {
-        //     miner.style.backgroundColor = 'darkslateBlue';
-        //   }
-        // });
         localStorage.setItem('money', newMoney.toFixed(1));
         return newMoney;
       });
@@ -67,15 +62,37 @@ export default function Home() {
     return () => clearInterval(perSecondInterval);
   }, [moneyPerSecond]);
 
-  const handleAsteroidClick = (event) => {
-    setMoney(prevMoney => prevMoney + 1);
+  const handleAsteroidClick = async (event) => {
+    let crit = Math.random() >= 0.98;
+
+    setMoney(prevMoney => prevMoney + moneyPerClick);
     localStorage.setItem('money', (money + 1).toString());
     setRotationDegrees(rotationDegrees + 5);
     document.querySelector('.mainClicker').style.transform = `rotate(${rotationDegrees}deg)`
 
+
     const x = event.clientX - 25;
     const y = event.clientY - 20.55;
     setExplosionPosition({x, y});
+
+    await Tone.start();
+    const compressor = new Tone.Compressor({  
+      ratio: 12, // Adjust the ratio as needed
+      threshold: -24, // Adjust the threshold as needed
+      release: 0.1, // Adjust the release time as needed
+      attack: 0.001 
+    });
+    synth.dispose();
+    synth = new Tone.Synth();
+    synth.connect(vol).connect(compressor);
+    const critNotes = ["C5", "F5"];
+    const noncritNotes = ["C3", "F3"];
+    let noteIndex = Math.floor(Math.random() * critNotes.length);
+    if (crit) {
+      synth.triggerAttackRelease(critNotes[noteIndex], "16n");
+    } else {
+      synth.triggerAttackRelease(noncritNotes[noteIndex], "32n");
+    }
 
     setTimeout(() => {
       setExplosionPosition(null);
