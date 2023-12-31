@@ -16,7 +16,6 @@ export default function Home() {
   ];
 
   let [money, setMoney] = useState(0);
-  // let [moneyPerClick, setMoneyPerClick] = useState(1);
   let [clickUpgrade, setClickUpgrade] = useState({moneyPerClick: 1, cost: 10})
   let [moneyPerSecond, setMoneyPerSecond] = useState(0);
   let [rotationDegrees, setRotationDegrees] = useState(5);
@@ -89,8 +88,9 @@ export default function Home() {
     let noteIndex = Math.floor(Math.random() * critNotes.length);
 
     if (crit) {
+      critText();
       synth.triggerAttackRelease(critNotes[noteIndex], "16n");
-      setMoney(prevMoney => prevMoney + clickUpgrade.moneyPerClick * 50);
+      setMoney(prevMoney => prevMoney + clickUpgrade.moneyPerClick * 100);
     } else {
       synth.triggerAttackRelease(noncritNotes[noteIndex], "32n");
     }
@@ -305,4 +305,31 @@ function formatNumber(number) {
   } else {
     return 0;
   }
+}
+
+function critText() {
+  const critText = document.createElement('p');
+  critText.innerHTML = "Critical Swing!";
+  
+  critText.style.position = 'absolute';
+  critText.style.fontSize = '32px';
+  critText.style.width = '50px';
+  critText.style.fontFamily = 'SpaceFont';
+  critText.style.zIndex ='999';
+  critText.style.color = 'red';
+  critText.style.pointerEvents = 'none';
+
+  const asteroid = document.querySelector('.mainClicker');
+  const targetRect = asteroid.getBoundingClientRect();
+  const x = targetRect.left + targetRect.width / 2 - 50;
+  const y = targetRect.top + targetRect.height / 2 - 50;
+
+  critText.style.left = `${x}px`;
+  critText.style.top = `${y}px`;
+
+  document.body.appendChild(critText);
+
+  setTimeout(() => {
+    document.body.removeChild(critText);
+  }, 500);
 }
