@@ -28,7 +28,6 @@ export default function Home() {
   
   // Just for statistics
   let [collectedAchievements, setCollectedAchievements] = useState([]);
-  let [activeAchievements, setActiveAchievements] = useState([]);
   let [clicks, setClicks] = useState(0);
   
   
@@ -224,11 +223,13 @@ export default function Home() {
       return 0;
     });
 
-    // This mysteriously doesnt work, but maybe achievements should be saved on reset anyway?
-    setCollectedAchievements(() => {
-      localStorage.setItem('collectedAchievements', '[]');
-      return [];
-    });
+    // Horrible hack to fix race condition between localStorage and useEffect, will fix later 🗿
+    localStorage.setItem('collectedAchievements', '[]');
+    setTimeout(() => {
+      setCollectedAchievements(() => {
+        return [];
+      });
+    }, 5000);
 
     console.log(collectedAchievements)
 
