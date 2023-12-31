@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import styles from './styles.css'
 import * as Tone from 'tone'
+import { playMusic, stopMusic } from './background-music'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
@@ -86,8 +87,8 @@ export default function Home() {
     let synth = new Tone.Synth().connect(vol);
 
     if (!muted) {
-      const critNotes = ["C5", "F5"];
-      const noncritNotes = ["C3", "F3"];
+      const critNotes = ["A6", "G6"];
+      const noncritNotes = ["A4", "G4"];
       let noteIndex = Math.floor(Math.random() * critNotes.length);
       if (crit) {
         synth.triggerAttackRelease(critNotes[noteIndex], "16n");
@@ -230,8 +231,10 @@ export default function Home() {
     document.getElementById('toggleMute').classList.toggle('muted');
     if (muted) {
       Tone.start();
+      playMusic();
       setMuted(false);
     } else {
+      stopMusic();
       setMuted(true);
     }
   }
