@@ -268,4 +268,8 @@ dialog button {
     width: 375px;
   }
 
+  #tutorial p {
+    font-size: 14px;
+  }
+
 }
