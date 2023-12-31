@@ -288,7 +288,7 @@ export default function Home() {
         <hr></hr>
         {unlockedUpgrades.map((upgrade, index) => (
           <p key={index}>
-            {upgrade.name}: {upgrade.qty * upgrade.perSecond}
+            {upgrade.name}: {formatNumber(upgrade.qty * upgrade.perSecond)}
           </p>
         ))}
         <hr></hr>
