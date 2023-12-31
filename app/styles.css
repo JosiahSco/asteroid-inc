@@ -106,7 +106,7 @@
   height: 75px;
 }
 
-.upgrade {
+.upgrade, #clickUpgrade {
   font-family: 'SpaceFont';
   background-color: darkslateblue;
   font-size: 26px;
@@ -114,6 +114,18 @@
   padding: 5px;
   margin: 10px;
   cursor: pointer;
+}
+
+.clickCost {
+  
+}
+
+#clickUpgrade p{
+  width: 30%;
+}
+
+#clickUpgrade p:last-of-type{
+  font-size: 12px;
 }
 
 .right .reset {
@@ -192,9 +204,13 @@ dialog {
     padding-bottom: 100px;
   }
 
-  .upgrade {
+  .upgrade, #clickUpgrade {
     width: 375px;
     font-size: 15px;
+  }
+
+  #clickUpgrade p:last-of-type {
+    font-size: 12px;
   }
 
   .footer {

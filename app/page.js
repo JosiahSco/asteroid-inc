@@ -16,7 +16,8 @@ export default function Home() {
   ];
 
   let [money, setMoney] = useState(0);
-  let [moneyPerClick, setMoneyPerClick] = useState(1);
+  // let [moneyPerClick, setMoneyPerClick] = useState(1);
+  let [clickUpgrade, setClickUpgrade] = useState({moneyPerClick: 1, cost: 10})
   let [moneyPerSecond, setMoneyPerSecond] = useState(0);
   let [rotationDegrees, setRotationDegrees] = useState(5);
   let [purchasedUpgrades, setPurchasedUpgrades] = useState([]);
@@ -35,6 +36,11 @@ export default function Home() {
     const savedMoneyPerSecond = localStorage.getItem('moneyPerSecond');
     if(savedMoneyPerSecond) {
       setMoneyPerSecond(parseFloat(savedMoneyPerSecond));
+    }
+
+    const savedClickUpgrade = localStorage.getItem('clickUpgrade');
+    if(savedClickUpgrade) {
+      setClickUpgrade(JSON.parse(savedClickUpgrade));
     }
 
     const savedUpgrades = localStorage.getItem('upgrades');
@@ -62,9 +68,9 @@ export default function Home() {
   }, [moneyPerSecond]);
 
   const handleAsteroidClick = async (event) => {
-    let crit = Math.random() >= 0.98;
+    let crit = Math.random() >= 0.99;
 
-    setMoney(prevMoney => prevMoney + moneyPerClick);
+    setMoney(prevMoney => prevMoney + clickUpgrade.moneyPerClick);
     localStorage.setItem('money', (money + 1).toString());
     setRotationDegrees(rotationDegrees + 5);
     document.querySelector('.mainClicker').style.transform = `rotate(${rotationDegrees}deg)`
@@ -74,21 +80,17 @@ export default function Home() {
     const y = event.clientY - 20.55;
     setExplosionPosition({x, y});
 
+    // Setup Tone.js synth for sound effect 
     await Tone.start();
     let vol = new Tone.Volume(-12).toDestination();
     let synth = new Tone.Synth().connect(vol);
-    const compressor = new Tone.Compressor({  
-      ratio: 12, 
-      threshold: -24, 
-      release: 0.1, 
-      attack: 0.001 
-    });
-    synth.connect(vol).connect(compressor);
     const critNotes = ["C5", "F5"];
     const noncritNotes = ["C3", "F3"];
     let noteIndex = Math.floor(Math.random() * critNotes.length);
+
     if (crit) {
       synth.triggerAttackRelease(critNotes[noteIndex], "16n");
+      setMoney(prevMoney => prevMoney + clickUpgrade.moneyPerClick * 50);
     } else {
       synth.triggerAttackRelease(noncritNotes[noteIndex], "32n");
     }
@@ -101,6 +103,23 @@ export default function Home() {
       setExplosionPosition(null);
     }, 1500);
   };
+
+  const handleClickUpgrade = () => {
+    if (money < clickUpgrade.cost) return;
+
+    setClickUpgrade(prevClickUpgrade => {
+      const newClickUpgrade = {moneyPerClick: (prevClickUpgrade.moneyPerClick * 2), cost: (prevClickUpgrade.cost * 10)}
+      localStorage.setItem('clickUpgrade', JSON.stringify(newClickUpgrade));
+      return newClickUpgrade;
+    });
+
+    setMoney(prevMoney => {
+      const newMoney = prevMoney - clickUpgrade.cost;
+      localStorage.setItem('money', newMoney.toString());
+      return newMoney;
+    })
+
+  }
 
   const handleUpgradePurchase = (upgrade) => {
     if (upgrade.cost - money > 0) return;
@@ -146,6 +165,12 @@ export default function Home() {
       return 0;
     });
 
+    setClickUpgrade(() => {
+      const init = {moneyPerClick: 1, cost: 10};
+      localStorage.setItem('clickUpgrade', JSON.stringify(init));
+      return init;
+    })
+
     setUpgrades(() => {
       localStorage.setItem('upgrades', JSON.stringify(initialUpgradeState));
       return [];
@@ -159,7 +184,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    let minerTypes = document.querySelectorAll('.upgrade');
+    const minerTypes = document.querySelectorAll('.upgrade');
     minerTypes.forEach((miner, index) => {
       if (upgrades[index].cost > money) {
         miner.style.backgroundColor = '#1e1a37';
@@ -168,7 +193,17 @@ export default function Home() {
         miner.style.backgroundColor = 'darkslateBlue';
         miner.style.cursor = 'pointer';
       }
-    })
+    });
+
+    const clickUpgradeButton = document.querySelector('#clickUpgrade');
+    if (clickUpgrade.cost > money) {
+      clickUpgradeButton.style.backgroundColor = '#1e1a37';
+      clickUpgradeButton.style.cursor = 'auto';
+    } else {
+      clickUpgradeButton.style.backgroundColor = 'darkslateBlue';
+      clickUpgradeButton.style.cursor = 'pointer';
+    }
+
   }, [money])
 
   const unlockedUpgrades = upgrades.filter(upgrade => {
@@ -218,6 +253,12 @@ export default function Home() {
       <p>{formatNumber(moneyPerSecond)}/s</p>
      </div>
      <div className="right">
+      <button onClick={handleClickUpgrade} id='clickUpgrade'>
+        <img src='/pickaxe.png'></img>
+        <p>x2 Click Power</p>
+        <p className='cost'>Cost: {formatNumber(clickUpgrade.cost)}</p>
+        <p>Current Credits per Click: {clickUpgrade.moneyPerClick}</p>
+      </button>
       {unlockedUpgrades.map((upgrade) => (
         <UpgradeButton
           className='upgrade'
