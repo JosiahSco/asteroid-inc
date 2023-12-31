@@ -84,10 +84,20 @@ export default function Home() {
     // Setup Tone.js synth for sound effect 
     await Tone.start();
     let vol = new Tone.Volume(-12).toDestination();
-    let synth = new Tone.Synth().connect(vol);
+    let synth = new Tone.Synth({
+        oscillator: {
+        type: 'sine',
+      },
+      // envelope: {
+      //   attack: 0.1,
+      //   decay: 0.2,
+      //   sustain: 0.7,
+      //   release: 0.2,
+      // },
+    }).connect(vol);
 
     if (!muted) {
-      const critNotes = ["A6", "G6"];
+      const critNotes = ["A5", "G5"];
       const noncritNotes = ["A4", "G4"];
       let noteIndex = Math.floor(Math.random() * critNotes.length);
       if (crit) {
@@ -259,6 +269,7 @@ export default function Home() {
       <p>{formatNumber(money)}</p>
       { explosionPosition && (
         <img src='/explosion.png' 
+          alt='Asteroid'
           style={{ 
             width: '50px', 
             position: 'absolute', 
