@@ -8,12 +8,12 @@ import { useEffect, useState } from 'react'
 export default function Home() {
 
   const initialUpgradeState = [
-    { id: 1, name: 'Human Miner', cost: 15, perSecond: 0.1, qty: 0, img: '/human.png'},
-    { id: 2, name: 'Alien Miner', cost: 100, perSecond: 1, qty: 0, img: '/alien.png'},
-    { id: 3, name: 'Space Beast', cost: 1000, perSecond: 10, qty: 0, img: '/space-beast.png'},
-    { id: 4, name: 'Nano bot', cost: 5000, perSecond: 75, qty: 0, img: '/nanobot.png'},
-    { id: 5, name: 'Mech Miner', cost: 25_000, perSecond: 200, qty: 0, img: '/mech-miner.png'},
-    { id: 6, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0, img: '/giant-lazer.png'},
+    { id: 1, name: 'Human Miner', cost: 15, perSecond: 0.1, qty: 0, img: '/human.png', sound: '/sounds/human-sound.mp3'},
+    { id: 2, name: 'Alien Miner', cost: 100, perSecond: 1, qty: 0, img: '/alien.png', sound: '/sounds/alien-sound.mp3'},
+    { id: 3, name: 'Space Beast', cost: 1000, perSecond: 10, qty: 0, img: '/space-beast.png', sound: '/sounds/space-beast-sound.mp3'},
+    { id: 4, name: 'Nano bot', cost: 5000, perSecond: 75, qty: 0, img: '/nanobot.png', sound: '/sounds/nano-bot-sound.mp3'},
+    { id: 5, name: 'Mech Miner', cost: 25_000, perSecond: 200, qty: 0, img: '/mech-miner.png', sound: '/sounds/mech-miner-sound.mp3'},
+    { id: 6, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0, img: '/giant-lazer.png', sound: '/sounds/giant-lazer-sound.mp3'},
   ];
 
   let [money, setMoney] = useState(0);
@@ -25,6 +25,8 @@ export default function Home() {
   let [explosionPosition, setExplosionPosition] = useState(null);
   let [muted, setMuted] = useState(true);
 
+  // Just for statistics
+  let [clicks, setClicks] = useState(0);
  
 
   useEffect(() => {
@@ -53,6 +55,11 @@ export default function Home() {
     if(savedPurchasedUpgrades) {
       setPurchasedUpgrades(JSON.parse(savedPurchasedUpgrades));
     }
+
+    const savedClicks = localStorage.getItem('clicks');
+    if (savedClicks) {
+      setClicks(parseInt(savedClicks));
+    }
   
   }, []);
 
@@ -70,6 +77,11 @@ export default function Home() {
 
   const handleAsteroidClick = async (event) => {
     let crit = Math.random() >= 0.99;
+
+    setClicks(prevClicks => {
+      localStorage.setItem('clicks', prevClicks + 1);
+      return prevClicks + 1;
+    })
 
     setMoney(prevMoney => prevMoney + clickUpgrade.moneyPerClick);
     localStorage.setItem('money', (money + 1).toString());
@@ -118,6 +130,7 @@ export default function Home() {
   const handleClickUpgrade = () => {
     if (money < clickUpgrade.cost) return;
 
+    new Audio('/sounds/click-upgrade-sound.mp3').play();
     setClickUpgrade(prevClickUpgrade => {
       const newClickUpgrade = {moneyPerClick: (prevClickUpgrade.moneyPerClick * 2), cost: (prevClickUpgrade.cost * 10)}
       localStorage.setItem('clickUpgrade', JSON.stringify(newClickUpgrade));
@@ -135,6 +148,9 @@ export default function Home() {
   const handleUpgradePurchase = (upgrade) => {
     if (upgrade.cost - money > 0) return;
 
+    if (!muted) {
+      new Audio(upgrade.sound).play();
+    }
     setMoney(money - upgrade.cost);
     localStorage.setItem('money', money.toString());
 
@@ -180,17 +196,23 @@ export default function Home() {
       const init = {moneyPerClick: 1, cost: 10};
       localStorage.setItem('clickUpgrade', JSON.stringify(init));
       return init;
-    })
+    });
 
     setUpgrades(() => {
       localStorage.setItem('upgrades', JSON.stringify(initialUpgradeState));
       return [];
-    })
+    });
 
     setPurchasedUpgrades(() => {
       localStorage.setItem('purchasedUpgrades', '[]');
       return [];
     });
+
+    setClicks(() => {
+      localStorage.setItem('clicks', 0);
+      return 0;
+    });
+
     document.location.reload();
   }
 
@@ -256,9 +278,26 @@ export default function Home() {
       <p>Happy Mining!</p>
       <button autoFocus onClick={() => document.getElementById('tutorial').close()}>Close</button>
      </dialog>
+     <dialog id='stats'>
+        <h3>Statistics</h3>
+        <h4>General</h4>
+        <hr></hr>
+        <p>Best Upgrade to Buy: {bestUpgrade(unlockedUpgrades)}</p>
+        <p>Total Clicks: {clicks}</p>
+        <h4>Per Second: </h4>
+        <hr></hr>
+        {unlockedUpgrades.map((upgrade, index) => (
+          <p key={index}>
+            {upgrade.name}: {upgrade.qty * upgrade.perSecond}
+          </p>
+        ))}
+        <hr></hr>
+      <button autoFocus onClick={() => document.getElementById('stats').close()}>Close</button>
+     </dialog>
      <div>
       <button id='openTutorial' onClick={() => document.getElementById('tutorial').showModal()}>?</button>
       <button id='toggleMute' onClick={toggleMute} className='muted'>♫</button>
+      <button id='openStats' onClick={() => document.getElementById('stats').showModal()}>#</button>
      </div>
       <p>{formatNumber(money)}</p>
       { explosionPosition && (
@@ -359,4 +398,18 @@ function critText() {
   setTimeout(() => {
     document.body.removeChild(critText);
   }, 500);
+}
+
+function bestUpgrade(upgrades) {
+  let productionPerCredit = 0;
+  let bestUpgradeName = '';
+  upgrades.forEach(upgrade => {
+    let temp = upgrade.perSecond / upgrade.cost;
+    if (temp > productionPerCredit) {
+      productionPerCredit = temp;
+      bestUpgradeName = upgrade.name;
+    }
+  });
+
+  return bestUpgradeName;
 }

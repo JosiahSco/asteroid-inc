@@ -154,17 +154,44 @@ dialog {
 }
 
 #tutorial h3 {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 18px;
 }
 
 #tutorial p {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 16px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 24px;
   color: white;
 }
 
-#tutorial button {
+#stats {
+  min-width: 45%;
+}
+
+#stats h3{
+  font-size: 32px;
+  font-family: 'SpaceFont';
+  color: darkslateblue;
+}
+
+#stats h4 {
+  padding-top: 15px;
+  font-family: 'SpaceFont';
+  font-size: 18;
+
+}
+
+#stats p {
+  color: white;
+  font-size: 14px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#stats button {
+  font-family: 'SpaceFont';
+}
+
+dialog button {
   font-size: 16px;
   background-color: darkslateblue;
   color: white;
@@ -175,7 +202,7 @@ dialog {
   float: right;
 }
 
-#openTutorial, #toggleMute {
+#openTutorial, #toggleMute, #openStats {
   font-size: 24px;
   margin: 5px;
   background-color: darkslateblue;
