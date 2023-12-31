@@ -11,17 +11,11 @@ export function playMusic() {
         
     synth = new Tone.Synth({
         oscillator: {
-            type: 'sine', // Adjust the oscillator type for the desired bass tone
-        },
-        envelope: {
-            attack: 0.1,
-            decay: 0.2,
-            sustain: 0.5,
-            release: 0.2,
+            type: 'sine', 
         },
         }).toDestination();
         
-        synth.volume.value = -18;
+        synth.volume.value = -15;
     
         const basslineSequence = ['A2', 'A2', 'A2', 'A2', 'C2', 'C2', 'E2', 'E2']
         
@@ -37,15 +31,9 @@ export function playMusic() {
         oscillator: {
             type: 'triangle', 
         },
-        envelope: {
-            attack: 0.1,
-            decay: 0.2,
-            sustain: 0.5,
-            release: 0.2,
-        },
         }).toDestination();
         
-        melodySynth.volume.value = -28; 
+        melodySynth.volume.value = -13; 
         
         const melodySequence = ['A3', 'A3', 'G3', 'A3', 'D3', 'A3', 'G3', 'A3'];
         
