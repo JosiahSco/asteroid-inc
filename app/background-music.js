@@ -17,7 +17,7 @@ export function playMusic() {
         
         synth.volume.value = -15;
     
-        const basslineSequence = ['A2', 'A2', 'A2', 'A2', 'C2', 'C2', 'E2', 'E2']
+        const basslineSequence = ['A2', 'A2', 'A2', 'A2', 'C3', 'C3', 'E3', 'E3']
         
         bassline = new Tone.Sequence(
         (time, note) => {
