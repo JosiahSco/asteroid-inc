@@ -116,10 +116,6 @@
   cursor: pointer;
 }
 
-.clickCost {
-  
-}
-
 #clickUpgrade p{
   width: 30%;
 }
@@ -179,12 +175,28 @@ dialog {
   float: right;
 }
 
-#openTutorial {
+#openTutorial, #toggleMute {
   font-size: 24px;
+  margin: 5px;
   background-color: darkslateblue;
   color: white;
+  width: 50px;
+  height: 50px;
   padding: 4px 12px 4px 12px;
   border-radius: 6px;
+}
+
+#toggleMute.muted::before {
+  content: '';
+  position: absolute;
+  /* top: 50%; */
+  /* left: 0; */
+  width: 2px;
+  height: 50px;
+  /* height: 2px; Set the thickness of the line */
+  background-color: white; /* Set the color of the line */
+  transform: translate(400%, -20%) rotate(-45deg);
+  /* transform: rotate(-45deg); */
 }
 
 @media only screen and (max-width: 768px) {

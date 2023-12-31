@@ -22,6 +22,7 @@ export default function Home() {
   let [purchasedUpgrades, setPurchasedUpgrades] = useState([]);
   let [upgrades, setUpgrades] = useState(initialUpgradeState);
   let [explosionPosition, setExplosionPosition] = useState(null);
+  let [muted, setMuted] = useState(true);
 
  
 
@@ -83,16 +84,21 @@ export default function Home() {
     await Tone.start();
     let vol = new Tone.Volume(-12).toDestination();
     let synth = new Tone.Synth().connect(vol);
-    const critNotes = ["C5", "F5"];
-    const noncritNotes = ["C3", "F3"];
-    let noteIndex = Math.floor(Math.random() * critNotes.length);
+
+    if (!muted) {
+      const critNotes = ["C5", "F5"];
+      const noncritNotes = ["C3", "F3"];
+      let noteIndex = Math.floor(Math.random() * critNotes.length);
+      if (crit) {
+        synth.triggerAttackRelease(critNotes[noteIndex], "16n");
+      } else {
+        synth.triggerAttackRelease(noncritNotes[noteIndex], "32n");
+      }
+    }
 
     if (crit) {
       critText();
-      synth.triggerAttackRelease(critNotes[noteIndex], "16n");
       setMoney(prevMoney => prevMoney + clickUpgrade.moneyPerClick * 100);
-    } else {
-      synth.triggerAttackRelease(noncritNotes[noteIndex], "32n");
     }
 
     setTimeout(() => {
@@ -220,6 +226,16 @@ export default function Home() {
     right.scrollTo({top: right.scrollHeight, behavior: 'smooth'});
   }, [unlockedUpgrades.length]);
 
+  const toggleMute = () => {
+    document.getElementById('toggleMute').classList.toggle('muted');
+    if (muted) {
+      Tone.start();
+      setMuted(false);
+    } else {
+      setMuted(true);
+    }
+  }
+
   return (
     <main className="main">
      <div className="spaceBackground"></div>
@@ -233,7 +249,10 @@ export default function Home() {
       <p>Happy Mining!</p>
       <button autoFocus onClick={() => document.getElementById('tutorial').close()}>Close</button>
      </dialog>
-     <button id='openTutorial' onClick={() => document.getElementById('tutorial').showModal()}>?</button>
+     <div>
+      <button id='openTutorial' onClick={() => document.getElementById('tutorial').showModal()}>?</button>
+      <button id='toggleMute' onClick={toggleMute} className='muted'>♫</button>
+     </div>
       <p>{formatNumber(money)}</p>
       { explosionPosition && (
         <img src='/explosion.png' 
