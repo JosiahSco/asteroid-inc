@@ -15,7 +15,7 @@ export function playMusic() {
         },
         }).toDestination();
         
-        synth.volume.value = -15;
+        synth.volume.value = -12;
     
         const basslineSequence = ['A2', 'A2', 'A2', 'A2', 'C3', 'C3', 'E3', 'E3']
         
