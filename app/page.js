@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import styles from './styles.css'
 import * as Tone from 'tone'
-import { playMusic, stopMusic } from './background-music'
+import { playMusic, stopMusic } from './background-music.js'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
