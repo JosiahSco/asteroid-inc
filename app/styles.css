@@ -137,7 +137,14 @@
 }
 
 .footer {
+  z-index: 9999;
   width: 100%;
+  position: fixed;
+  top: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .resetWrapper {
@@ -226,6 +233,35 @@ dialog button {
   /* transform: rotate(-45deg); */
 }
 
+.achievementCard {
+  border: 2px solid white;
+  display: flex;
+  background-color: darkslategray;
+  padding: 10px;
+  border-radius: 12px;
+  min-width: 300px;
+  align-items: center;
+}
+
+.achievementCard img {
+  width: 50px;
+}
+
+.achievementCard button {
+  float: right;
+  font-size: 16px;
+  background-color: red;
+  height: 25px;
+  width: 25px;
+  border-radius: 4px;
+}
+
+.innerAchievement {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+}
+
 @media only screen and (max-width: 768px) {
   .mainClicker img {
     width: 200px;
@@ -252,13 +288,13 @@ dialog button {
     font-size: 12px;
   }
 
-  .footer {
+  /* .footer {
     display: flex;
     min-width: 100%;
     min-height: 50px;
     justify-content: flex-end;
     align-items: flex-end;
-  }
+  } */
 
   .right .reset {
     font-size: 16px;

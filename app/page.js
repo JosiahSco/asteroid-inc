@@ -3,6 +3,7 @@ import Image from 'next/image'
 import styles from './styles.css'
 import * as Tone from 'tone'
 import { playMusic, stopMusic } from './background-music.js'
+import { achievementList } from './acheivements'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
@@ -11,7 +12,7 @@ export default function Home() {
     { id: 1, name: 'Human Miner', cost: 15, perSecond: 0.1, qty: 0, img: '/human.png', sound: '/sounds/human-sound.mp3'},
     { id: 2, name: 'Alien Miner', cost: 100, perSecond: 1, qty: 0, img: '/alien.png', sound: '/sounds/alien-sound.mp3'},
     { id: 3, name: 'Space Beast', cost: 1000, perSecond: 10, qty: 0, img: '/space-beast.png', sound: '/sounds/space-beast-sound.mp3'},
-    { id: 4, name: 'Nano bot', cost: 5000, perSecond: 75, qty: 0, img: '/nanobot.png', sound: '/sounds/nano-bot-sound.mp3'},
+    { id: 4, name: 'Nano bot', cost: 7500, perSecond: 75, qty: 0, img: '/nanobot.png', sound: '/sounds/nano-bot-sound.mp3'},
     { id: 5, name: 'Mech Miner', cost: 25_000, perSecond: 200, qty: 0, img: '/mech-miner.png', sound: '/sounds/mech-miner-sound.mp3'},
     { id: 6, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0, img: '/giant-lazer.png', sound: '/sounds/giant-lazer-sound.mp3'},
   ];
@@ -24,16 +25,47 @@ export default function Home() {
   let [upgrades, setUpgrades] = useState(initialUpgradeState);
   let [explosionPosition, setExplosionPosition] = useState(null);
   let [muted, setMuted] = useState(true);
-
+  
   // Just for statistics
+  let [collectedAchievements, setCollectedAchievements] = useState([]);
+  let [activeAchievements, setActiveAchievements] = useState([]);
   let [clicks, setClicks] = useState(0);
- 
+  
+  
+  // This is horrible but the alternatives require huge changes for little gain
+  const [gameState, setGameState] = useState(
+    { money, clickUpgrade, moneyPerSecond, rotationDegrees, purchasedUpgrades, upgrades, explosionPosition, muted, clicks, collectedAchievements }
+  );
+  useEffect(() => {
+    setGameState({ money, clickUpgrade, moneyPerSecond, rotationDegrees, purchasedUpgrades, upgrades, explosionPosition, muted, clicks, collectedAchievements });
+    manageAcheivements(gameState);
+  }, [ money, clickUpgrade, moneyPerSecond, rotationDegrees, purchasedUpgrades, upgrades, explosionPosition, muted, clicks, collectedAchievements]);
+
+  const manageAcheivements = (gameState) => {
+    achievementList.forEach(achievement => {
+      if (!collectedAchievements.includes(achievement.id) && achievement.condition(gameState)) {
+        console.log('Achievement Unlocked: ', achievement.name);
+        const achievementCard = Achievement(achievement);
+        document.querySelector('.footer').appendChild(achievementCard);
+
+        setTimeout(() => {
+          document.querySelector('.footer').removeChild(achievementCard);
+        }, 10_000);
+
+        setCollectedAchievements(prevCollected => {
+          const newCollection = [...prevCollected, achievement.id]
+          localStorage.setItem('collectedAchievements', JSON.stringify(newCollection))
+          return newCollection;
+        });
+      }
+    })
+  }
+  
 
   useEffect(() => {
     const savedMoney = localStorage.getItem('money');
     if (savedMoney) {
       setMoney(parseInt(savedMoney));
-      // localStorage.setItem('money', 0);
     }
 
     const savedMoneyPerSecond = localStorage.getItem('moneyPerSecond');
@@ -59,6 +91,11 @@ export default function Home() {
     const savedClicks = localStorage.getItem('clicks');
     if (savedClicks) {
       setClicks(parseInt(savedClicks));
+    }
+
+    const savedCollectedAchievements = localStorage.getItem('collectedAchievements');
+    if (savedCollectedAchievements) {
+      setCollectedAchievements(JSON.parse(savedCollectedAchievements));
     }
   
   }, []);
@@ -130,7 +167,7 @@ export default function Home() {
   const handleClickUpgrade = () => {
     if (money < clickUpgrade.cost) return;
 
-    new Audio('/sounds/click-upgrade-sound.mp3').play();
+    if (!muted) new Audio('/sounds/click-upgrade-sound.mp3').play();
     setClickUpgrade(prevClickUpgrade => {
       const newClickUpgrade = {moneyPerClick: (prevClickUpgrade.moneyPerClick * 2), cost: (prevClickUpgrade.cost * 10)}
       localStorage.setItem('clickUpgrade', JSON.stringify(newClickUpgrade));
@@ -186,6 +223,14 @@ export default function Home() {
       localStorage.setItem('money', '0');
       return 0;
     });
+
+    // This mysteriously doesnt work, but maybe achievements should be saved on reset anyway?
+    setCollectedAchievements(() => {
+      localStorage.setItem('collectedAchievements', '[]');
+      return [];
+    });
+
+    console.log(collectedAchievements)
 
     setMoneyPerSecond(() => {
       localStorage.setItem('moneyPerSecond', '0');
@@ -291,7 +336,11 @@ export default function Home() {
             {upgrade.name}: {formatNumber(upgrade.qty * upgrade.perSecond)}
           </p>
         ))}
+        <h4>Achievements ({collectedAchievements.length} / {achievementList.length})</h4>
         <hr></hr>
+          {collectedAchievements.map((achievement, index)=> (
+            <p key={index}>{achievementList[achievement].name}: {achievementList[achievement].description}</p>
+          ))}
       <button autoFocus onClick={() => document.getElementById('stats').close()}>Close</button>
      </dialog>
      <div>
@@ -352,6 +401,21 @@ const UpgradeButton = ({ upgrade, onClick}) => {
       <div>Qty: {upgrade.qty}</div>
     </button>
   )
+}
+
+// Virtual DOM more like shut up and let me do this without 10 state properties and 3 dependencies
+const Achievement = (achievement) => {
+  const achievementCard = document.createElement('div');
+  achievementCard.classList.add('achievementCard');
+  achievementCard.innerHTML = `
+    <img src='/trophy.png' alt='trophy'></img>
+    <div class='innerAchievement'>
+        <h3>${achievement.name}</h3>
+        <p>${achievement.description}</p>
+    </div>
+    `;
+    // <button onclick="(${closeCard}())">x</button>
+  return achievementCard;
 }
 
 function formatNumber(number) {
