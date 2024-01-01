@@ -124,17 +124,26 @@
   font-size: 12px;
 }
 
-.right .reset {
+.right .prestige, .right .reset {
   z-index: 3;
   font-family: 'SpaceFont';
   font-size: 24px;
   height: auto;
   color: white;
-  background-color: red;
   padding: 4px;
   border-radius: 8px;
   float: inline-end;
+  margin-right: 10px;
 }
+
+.right .prestige {
+  background-color: rgb(220, 187, 0);
+}
+
+.right .reset {
+  background-color: red;
+}
+
 
 .footer {
   z-index: 9999;
@@ -296,8 +305,9 @@ dialog button {
     align-items: flex-end;
   } */
 
-  .right .reset {
+  .right .reset, .right .prestige {
     font-size: 16px;
+    height: 25px;
   }
 
   .resetWrapper {

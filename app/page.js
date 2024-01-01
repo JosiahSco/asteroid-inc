@@ -17,32 +17,34 @@ export default function Home() {
     { id: 6, name: 'Giant Lazer', cost: 100_000, perSecond: 500, qty: 0, img: '/giant-lazer.png', sound: '/sounds/giant-lazer-sound.mp3'},
   ];
 
-  let [money, setMoney] = useState(0);
-  let [clickUpgrade, setClickUpgrade] = useState({moneyPerClick: 1, cost: 10})
-  let [moneyPerSecond, setMoneyPerSecond] = useState(0);
-  let [rotationDegrees, setRotationDegrees] = useState(5);
-  let [purchasedUpgrades, setPurchasedUpgrades] = useState([]);
-  let [upgrades, setUpgrades] = useState(initialUpgradeState);
-  let [explosionPosition, setExplosionPosition] = useState(null);
-  let [muted, setMuted] = useState(true);
-  
-  // Just for statistics
-  let [collectedAchievements, setCollectedAchievements] = useState([]);
-  let [clicks, setClicks] = useState(0);
-  
-  
-  // This is horrible but the alternatives require huge changes for little gain
-  const [gameState, setGameState] = useState(
-    { money, clickUpgrade, moneyPerSecond, rotationDegrees, purchasedUpgrades, upgrades, explosionPosition, muted, clicks, collectedAchievements }
-  );
-  useEffect(() => {
-    setGameState({ money, clickUpgrade, moneyPerSecond, rotationDegrees, purchasedUpgrades, upgrades, explosionPosition, muted, clicks, collectedAchievements });
-    manageAcheivements(gameState);
-  }, [ money, clickUpgrade, moneyPerSecond, rotationDegrees, purchasedUpgrades, upgrades, explosionPosition, muted, clicks, collectedAchievements]);
+  let initState = {
+    money: 0,
+    clickUpgrade: {
+      moneyPerClick: 1,
+      cost: 10
+    },
+    moneyPerSecond: 0,
+    purchasedUpgrades: [],
+    upgrades: initialUpgradeState,
+    muted: true,
+    prestige: 0,
+    prestigeMultiplier: 1,
+    collectedAchievements: [],
+    clicks: 0,
+    allTimeMoney: 0,
+  }
 
-  const manageAcheivements = (gameState) => {
+  let [gameState, setGameState] = useState(initState);
+  let [rotationDegrees, setRotationDegrees] = useState(5);
+  let [explosionPosition, setExplosionPosition] = useState(null);
+
+  useEffect(() => {
+    manageAcheivements(gameState);
+  }, [gameState]);
+
+  const manageAcheivements = (tempGameState) => {
     achievementList.forEach(achievement => {
-      if (!collectedAchievements.includes(achievement.id) && achievement.condition(gameState)) {
+      if (!gameState.collectedAchievements.includes(achievement.id) && achievement.condition(tempGameState)) {
         console.log('Achievement Unlocked: ', achievement.name);
         const achievementCard = Achievement(achievement);
         document.querySelector('.footer').appendChild(achievementCard);
@@ -51,76 +53,56 @@ export default function Home() {
           document.querySelector('.footer').removeChild(achievementCard);
         }, 10_000);
 
-        setCollectedAchievements(prevCollected => {
-          const newCollection = [...prevCollected, achievement.id]
-          localStorage.setItem('collectedAchievements', JSON.stringify(newCollection))
-          return newCollection;
-        });
+        setGameState(prevState => {
+          const newState = {
+            ...prevState,
+            collectedAchievements: [...prevState.collectedAchievements, achievement.id],
+          };
+          localStorage.setItem('gameState', newState);
+          return newState;
+        })
       }
     })
   }
   
 
   useEffect(() => {
-    const savedMoney = localStorage.getItem('money');
-    if (savedMoney) {
-      setMoney(parseInt(savedMoney));
+    const savedGameState = localStorage.getItem('gameState');
+    if (savedGameState) {
+      setGameState(JSON.parse(savedGameState));
     }
-
-    const savedMoneyPerSecond = localStorage.getItem('moneyPerSecond');
-    if(savedMoneyPerSecond) {
-      setMoneyPerSecond(parseFloat(savedMoneyPerSecond));
-    }
-
-    const savedClickUpgrade = localStorage.getItem('clickUpgrade');
-    if(savedClickUpgrade) {
-      setClickUpgrade(JSON.parse(savedClickUpgrade));
-    }
-
-    const savedUpgrades = localStorage.getItem('upgrades');
-    if(savedUpgrades) {
-      setUpgrades(JSON.parse(savedUpgrades));
-    }
-
-    const savedPurchasedUpgrades = localStorage.getItem('purchasedUpgrades');
-    if(savedPurchasedUpgrades) {
-      setPurchasedUpgrades(JSON.parse(savedPurchasedUpgrades));
-    }
-
-    const savedClicks = localStorage.getItem('clicks');
-    if (savedClicks) {
-      setClicks(parseInt(savedClicks));
-    }
-
-    const savedCollectedAchievements = localStorage.getItem('collectedAchievements');
-    if (savedCollectedAchievements) {
-      setCollectedAchievements(JSON.parse(savedCollectedAchievements));
-    }
-  
   }, []);
 
   useEffect(() => {
     const perSecondInterval = setInterval(() => {
-      setMoney((prevMoney) =>  {
-        let newMoney = Math.round((prevMoney + moneyPerSecond) * 100) / 100;
-        localStorage.setItem('money', newMoney.toFixed(1));
-        return newMoney;
+      setGameState(prevState => {
+        const newState = {
+          ...prevState,
+          money: Math.round((prevState.money + prevState.moneyPerSecond) * 100) / 100,
+          allTimeMoney: Math.round((prevState.allTimeMoney + prevState.moneyPerSecond) * 100) / 100
+        };
+        localStorage.setItem('gameState', JSON.stringify(newState));
+        return newState;
       });
     }, 1000);
 
     return () => clearInterval(perSecondInterval);
-  }, [moneyPerSecond]);
+  }, [gameState.moneyPerSecond]);
 
   const handleAsteroidClick = async (event) => {
     let crit = Math.random() >= 0.99;
 
-    setClicks(prevClicks => {
-      localStorage.setItem('clicks', prevClicks + 1);
-      return prevClicks + 1;
-    })
+    setGameState(prevState => {
+      const newState = {
+        ...prevState, 
+        clicks: prevState.clicks + 1,
+        money: prevState.money + prevState.clickUpgrade.moneyPerClick,
+        allTimeMoney: prevState.allTimeMoney + prevState.clickUpgrade.moneyPerClick,
+      };
+      localStorage.setItem('gameState', JSON.stringify(newState));
+      return newState;
+    });
 
-    setMoney(prevMoney => prevMoney + clickUpgrade.moneyPerClick);
-    localStorage.setItem('money', (money + 1).toString());
     setRotationDegrees(rotationDegrees + 5);
     document.querySelector('.mainClicker').style.transform = `rotate(${rotationDegrees}deg)`
 
@@ -138,7 +120,7 @@ export default function Home() {
       },
     }).connect(vol);
 
-    if (!muted) {
+    if (!gameState.muted) {
       const critNotes = ["A5", "G5"];
       const noncritNotes = ["A4", "G4"];
       let noteIndex = Math.floor(Math.random() * critNotes.length);
@@ -151,7 +133,15 @@ export default function Home() {
 
     if (crit) {
       critText();
-      setMoney(prevMoney => prevMoney + clickUpgrade.moneyPerClick * 100);
+      setGameState(prevState => {
+        const newState = {
+          ...prevState,
+          money: prevState.money + prevState.clickUpgrade.moneyPerClick * 100,
+          allTimeMoney: prevState.allTimeMoney + prevState.clickUpgrade.moneyPerClick * 100,
+        }
+        localStorage.setItem('gameState', newState);
+        return newState;
+      })
     }
 
     setTimeout(() => {
@@ -164,44 +154,29 @@ export default function Home() {
   };
 
   const handleClickUpgrade = () => {
-    if (money < clickUpgrade.cost) return;
+    if (gameState.money < gameState.clickUpgrade.cost) return;
 
-    if (!muted) new Audio('/sounds/click-upgrade-sound.mp3').play();
-    setClickUpgrade(prevClickUpgrade => {
-      const newClickUpgrade = {moneyPerClick: (prevClickUpgrade.moneyPerClick * 2), cost: (prevClickUpgrade.cost * 10)}
-      localStorage.setItem('clickUpgrade', JSON.stringify(newClickUpgrade));
-      return newClickUpgrade;
-    });
+    if (!gameState.muted) new Audio('/sounds/click-upgrade-sound.mp3').play();
 
-    setMoney(prevMoney => {
-      const newMoney = prevMoney - clickUpgrade.cost;
-      localStorage.setItem('money', newMoney.toString());
-      return newMoney;
+    setGameState(prevState => {
+      const newState = {
+        ...prevState,
+        money: prevState.money - prevState.clickUpgrade.cost,
+        clickUpgrade: {moneyPerClick: prevState.clickUpgrade.moneyPerClick * 2, cost: prevState.clickUpgrade.cost * 10},
+      };
+      localStorage.setItem('gameState', newState);
+      return newState;
     })
-
-  }
+  };
 
   const handleUpgradePurchase = (upgrade) => {
-    if (upgrade.cost - money > 0) return;
+    if (upgrade.cost - gameState.money > 0) return;
 
-    if (!muted) {
+    if (!gameState.muted) {
       new Audio(upgrade.sound).play();
     }
-    setMoney(money - upgrade.cost);
-    localStorage.setItem('money', money.toString());
 
-    setMoneyPerSecond(prevPerSecond =>  {
-      let newMoneyPerSecond = Math.round((prevPerSecond + upgrade.perSecond) * 100) / 100;
-      localStorage.setItem('moneyPerSecond', newMoneyPerSecond.toFixed(1));
-      return newMoneyPerSecond;
-    });
-
-    setPurchasedUpgrades(prevUpgrades => {
-      localStorage.setItem('purchasedUpgrades', JSON.stringify([...prevUpgrades, upgrade.id]));
-      return [...prevUpgrades, upgrade.id];
-    });
-
-    const updatedUpgrades = upgrades.map((u) => {
+    const updatedUpgrades = gameState.upgrades.map((u) => {
       if (u.id == upgrade.id) {
         return { ...u, cost: (u.cost * 1.15).toFixed(1), qty: u.qty + 1 }
       } else {
@@ -209,63 +184,56 @@ export default function Home() {
       }
     });
 
-    setUpgrades(() => {
-      localStorage.setItem('upgrades', JSON.stringify(updatedUpgrades));
-      return updatedUpgrades;
+    setGameState(prevState => {
+      const newState = {
+        ...prevState,
+        money: prevState.money - upgrade.cost,
+        moneyPerSecond: Math.round((prevState.moneyPerSecond + upgrade.perSecond) * 100) / 100,
+        purchasedUpgrades: [...prevState.purchasedUpgrades, upgrade.id],
+        upgrades: updatedUpgrades,
+      }
+      localStorage.setItem('gameState', newState);
+      return newState;
     });
-
   };
 
-  const handleReset = () => {
-    console.log('reset')
-    setMoney(() => {
-      localStorage.setItem('money', '0');
-      return 0;
+  const handlePrestige = () => {
+    const multiplier = Math.pow(2, gameState.allTimeMoney * 0.0000005);
+    console.log(multiplier);
+
+    const prePrestigeAchievements = gameState.collectedAchievements;
+    const prestige = gameState.prestige;
+    const prestigeMultiplier = gameState.prestigeMultiplier;
+    handleReset();
+
+    gameState.upgrades.forEach(upgrade => {
+      upgrade.perSecond *= multiplier;
+      console.log(upgrade.perSecond);
     });
 
-    // Horrible hack to fix race condition between localStorage and useEffect, will fix later 🗿
-    localStorage.setItem('collectedAchievements', '[]');
-    setTimeout(() => {
-      setCollectedAchievements(() => {
-        return [];
-      });
-    }, 5000);
-
-    console.log(collectedAchievements)
-
-    setMoneyPerSecond(() => {
-      localStorage.setItem('moneyPerSecond', '0');
-      return 0;
-    });
-
-    setClickUpgrade(() => {
-      const init = {moneyPerClick: 1, cost: 10};
-      localStorage.setItem('clickUpgrade', JSON.stringify(init));
-      return init;
-    });
-
-    setUpgrades(() => {
-      localStorage.setItem('upgrades', JSON.stringify(initialUpgradeState));
-      return [];
-    });
-
-    setPurchasedUpgrades(() => {
-      localStorage.setItem('purchasedUpgrades', '[]');
-      return [];
-    });
-
-    setClicks(() => {
-      localStorage.setItem('clicks', 0);
-      return 0;
-    });
-
-    document.location.reload();
+    setGameState(prevState => {
+      const newState = {
+        ...prevState,
+        prestige: prestige + 1,
+        prestigeMultiplier: prestigeMultiplier * multiplier,
+        collectedAchievements: prePrestigeAchievements,
+      };
+      localStorage.setItem('gameState', newState);
+      return newState;
+    })
   }
+
+  const handleReset = () => {
+    setGameState(() => {
+      localStorage.setItem('gameState', JSON.stringify(initState));
+      return initState;
+    })
+  };
 
   useEffect(() => {
     const minerTypes = document.querySelectorAll('.upgrade');
     minerTypes.forEach((miner, index) => {
-      if (upgrades[index].cost > money) {
+      if (gameState.upgrades[index].cost > gameState.money) {
         miner.style.backgroundColor = '#1e1a37';
         miner.style.cursor = 'auto';
       } else {
@@ -275,7 +243,7 @@ export default function Home() {
     });
 
     const clickUpgradeButton = document.querySelector('#clickUpgrade');
-    if (clickUpgrade.cost > money) {
+    if (gameState.clickUpgrade.cost > gameState.money) {
       clickUpgradeButton.style.backgroundColor = '#1e1a37';
       clickUpgradeButton.style.cursor = 'auto';
     } else {
@@ -283,13 +251,13 @@ export default function Home() {
       clickUpgradeButton.style.cursor = 'pointer';
     }
 
-  }, [money])
+  }, [gameState.money])
 
-  const unlockedUpgrades = upgrades.filter(upgrade => {
-    return purchasedUpgrades.includes(upgrade.id);
+  const unlockedUpgrades = gameState.upgrades.filter(upgrade => {
+    return gameState.purchasedUpgrades.includes(upgrade.id);
   });
 
-  const nextUpgrade = upgrades.find((upgrade) => !purchasedUpgrades.includes(upgrade.id));
+  const nextUpgrade = gameState.upgrades.find((upgrade) => !gameState.purchasedUpgrades.includes(upgrade.id));
   if (nextUpgrade) {
     unlockedUpgrades.push(nextUpgrade);
   }
@@ -301,14 +269,20 @@ export default function Home() {
 
   const toggleMute = () => {
     document.getElementById('toggleMute').classList.toggle('muted');
-    if (muted) {
+    if (gameState.muted) {
       Tone.start();
       playMusic();
-      setMuted(false);
     } else {
       stopMusic();
-      setMuted(true);
     }
+
+    setGameState(prevState => {
+      const newState = {
+        ...prevState,
+        muted: !prevState.muted,
+      }
+      return newState;
+    })
   }
 
   return (
@@ -329,7 +303,10 @@ export default function Home() {
         <h4>General</h4>
         <hr></hr>
         <p>Best Upgrade to Buy: {bestUpgrade(unlockedUpgrades)}</p>
-        <p>Total Clicks: {clicks}</p>
+        <p>Total Clicks: {formatNumber(gameState.clicks)}</p>
+        <p>Total Credits Collected: {formatNumber(gameState.allTimeMoney)}</p>
+        <p>Prestige #: {gameState.prestige}</p>
+        <p>Prestige Multiplier: {gameState.prestigeMultiplier}</p>
         <h4>Per Second: </h4>
         <hr></hr>
         {unlockedUpgrades.map((upgrade, index) => (
@@ -337,9 +314,9 @@ export default function Home() {
             {upgrade.name}: {formatNumber(upgrade.qty * upgrade.perSecond)}
           </p>
         ))}
-        <h4>Achievements ({collectedAchievements.length} / {achievementList.length})</h4>
+        <h4>Achievements ({gameState.collectedAchievements.length} / {achievementList.length})</h4>
         <hr></hr>
-          {collectedAchievements.map((achievement, index)=> (
+          {gameState.collectedAchievements.map((achievement, index)=> (
             <p key={index}>{achievementList[achievement].name}: {achievementList[achievement].description}</p>
           ))}
       <button autoFocus onClick={() => document.getElementById('stats').close()}>Close</button>
@@ -349,7 +326,7 @@ export default function Home() {
       <button id='toggleMute' onClick={toggleMute} className='muted'>♫</button>
       <button id='openStats' onClick={() => document.getElementById('stats').showModal()}>#</button>
      </div>
-      <p>{formatNumber(money)}</p>
+      <p>{formatNumber(gameState.money)}</p>
       { explosionPosition && (
         <img src='/explosion.png' 
           alt='Asteroid'
@@ -366,14 +343,14 @@ export default function Home() {
       <button className="mainClicker" onClick={handleAsteroidClick}>
         <img src='/asteroid.png' draggable="false"></img>
       </button>
-      <p>{formatNumber(moneyPerSecond)}/s</p>
+      <p>{formatNumber(gameState.moneyPerSecond)}/s</p>
      </div>
      <div className="right">
       <button onClick={handleClickUpgrade} id='clickUpgrade'>
         <img src='/pickaxe.png'></img>
         <p>x2 Click Power</p>
-        <p className='cost'>Cost: {formatNumber(clickUpgrade.cost)}</p>
-        <p>Current Credits per Click: {clickUpgrade.moneyPerClick}</p>
+        <p className='cost'>Cost: {formatNumber(gameState.clickUpgrade.cost)}</p>
+        <p>Current Credits per Click: {gameState.clickUpgrade.moneyPerClick}</p>
       </button>
       {unlockedUpgrades.map((upgrade) => (
         <UpgradeButton
@@ -385,6 +362,7 @@ export default function Home() {
       ))}
       <div className='resetWrapper'>
         <button className='reset' onClick={handleReset}>Reset</button>
+        <button className='prestige' onClick={handlePrestige}>Prestige</button>
       </div>
      </div>
      <div className='footer'>
