@@ -200,6 +200,8 @@ export default function Home() {
   const handlePrestige = () => {
     const multiplier = Math.pow(2, gameState.allTimeMoney * 0.0000005);
     console.log(multiplier);
+    const confirmed = window.confirm(`Your prestige multiplier will be ${gameState.prestigeMultiplier * multiplier}. Confirm?`);
+    if (!confirmed) return;
 
     const prePrestigeAchievements = gameState.collectedAchievements;
     const prestige = gameState.prestige;
@@ -208,7 +210,6 @@ export default function Home() {
 
     gameState.upgrades.forEach(upgrade => {
       upgrade.perSecond *= multiplier;
-      console.log(upgrade.perSecond);
     });
 
     setGameState(prevState => {
@@ -224,6 +225,8 @@ export default function Home() {
   }
 
   const handleReset = () => {
+    const confirmed = window.confirm('This will revert all progress and achievements. Confirm?');
+    if (!confirmed) return;
     setGameState(() => {
       localStorage.setItem('gameState', JSON.stringify(initState));
       return initState;
