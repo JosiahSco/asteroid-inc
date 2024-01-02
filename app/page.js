@@ -108,7 +108,7 @@ export default function Home() {
 
 
     const x = event.clientX - 25;
-    const y = event.clientY - 20.55;
+    const y = event.clientY - 20.55 + window.scrollY;
     setExplosionPosition({x, y});
 
     // Setup Tone.js synth for sound effect 
