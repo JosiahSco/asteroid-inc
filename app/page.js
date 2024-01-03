@@ -199,14 +199,12 @@ export default function Home() {
 
   const handlePrestige = () => {
     const multiplier = Math.pow(2, gameState.allTimeMoney * 0.0000005);
-    console.log(multiplier);
     const confirmed = window.confirm(`Your prestige multiplier will be ${gameState.prestigeMultiplier * multiplier}. Confirm?`);
     if (!confirmed) return;
 
     const prePrestigeAchievements = gameState.collectedAchievements;
     const prestige = gameState.prestige;
     const prestigeMultiplier = gameState.prestigeMultiplier;
-    handleReset();
 
     gameState.upgrades.forEach(upgrade => {
       upgrade.perSecond *= multiplier;
@@ -214,7 +212,8 @@ export default function Home() {
 
     setGameState(prevState => {
       const newState = {
-        ...prevState,
+        ...initState,
+        muted: prevState.muted,
         prestige: prestige + 1,
         prestigeMultiplier: prestigeMultiplier * multiplier,
         collectedAchievements: prePrestigeAchievements,
@@ -271,11 +270,12 @@ export default function Home() {
   }, [unlockedUpgrades.length]);
 
   const toggleMute = () => {
-    document.getElementById('toggleMute').classList.toggle('muted');
     if (gameState.muted) {
+      document.getElementById('toggleMute').classList.remove('muted');
       Tone.start();
       playMusic();
     } else {
+      document.getElementById('toggleMute').classList.add('muted');
       stopMusic();
     }
 
