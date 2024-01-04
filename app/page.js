@@ -206,10 +206,10 @@ export default function Home() {
     const prestige = gameState.prestige;
     const prestigeMultiplier = gameState.prestigeMultiplier;
 
-    gameState.upgrades.forEach(upgrade => {
+    const newUpgrades = initialUpgradeState.map(upgrade => {
       upgrade.perSecond *= multiplier;
     });
-
+    
     setGameState(prevState => {
       const newState = {
         ...initState,
@@ -217,10 +217,12 @@ export default function Home() {
         prestige: prestige + 1,
         prestigeMultiplier: prestigeMultiplier * multiplier,
         collectedAchievements: prePrestigeAchievements,
+        upgrades: newUpgrades,
+        clickUpgrade: {moneyPerClick: initState.clickUpgrade.moneyPerClick * multiplier, cost: initState.clickUpgrade.cost},
       };
       localStorage.setItem('gameState', newState);
       return newState;
-    })
+    });
   }
 
   const handleReset = () => {
