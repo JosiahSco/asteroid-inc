@@ -358,7 +358,7 @@ export default function Home() {
         <img src='/pickaxe.png'></img>
         <p>x2 Click Power</p>
         <p className='cost'>Cost: {formatNumber(gameState.clickUpgrade.cost)}</p>
-        <p>Current Credits per Click: {gameState.clickUpgrade.moneyPerClick}</p>
+        <p>Current Credits per Click: {formatNumber(gameState.clickUpgrade.moneyPerClick)}</p>
       </button>
       {unlockedUpgrades.map((upgrade) => (
         <UpgradeButton
