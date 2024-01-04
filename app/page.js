@@ -408,7 +408,7 @@ const Achievement = (achievement) => {
 function formatNumber(number) {
   if (typeof number == 'string') number = parseFloat(number);
 
-  if (number < 1000 && number % 1 !== 0) {
+  if (number < 1000 && number.toFixed(1) % 1 !== 0) {
     return number.toFixed(1);
   }
 
