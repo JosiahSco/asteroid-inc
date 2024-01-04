@@ -206,8 +206,11 @@ export default function Home() {
     const prestige = gameState.prestige;
     const prestigeMultiplier = gameState.prestigeMultiplier;
 
-    const newUpgrades = initialUpgradeState.map(upgrade => {
-      upgrade.perSecond *= multiplier;
+    let newUpgrades = initialUpgradeState.map(upgrade => {
+      return {
+        ...upgrade,
+      perSecond: upgrade.perSecond * multiplier
+      }
     });
     
     setGameState(prevState => {
