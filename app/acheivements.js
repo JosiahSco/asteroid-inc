@@ -13,9 +13,9 @@ export const achievementList = [
     },
     {
         id: 2,
-        name: 'Click 1M Times',
-        description: "This one shouldn't even be possible!",
-        condition: (state) => state.clicks >= 1_000_000,
+        name: 'Click 10K Times',
+        description: "Maybe take a break?",
+        condition: (state) => state.clicks >= 10_000,
     },
     {
         id: 3,
@@ -44,7 +44,7 @@ export const achievementList = [
     {
         id: 7,
         name: 'What are the odds?',
-        description: "1 in a Million chance around every second to get this.",
-        condition: (state) => Math.random() <= (1 / 1_000_000),
+        description: "1 in a 10,000 chance around every second to get this.",
+        condition: (state) => Math.random() <= (1 / 10_000),
     },
 ]
