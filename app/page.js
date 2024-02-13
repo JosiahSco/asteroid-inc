@@ -4,7 +4,7 @@ import styles from './styles.css'
 import * as Tone from 'tone'
 import { playMusic, stopMusic } from './background-music.js'
 import { achievementList } from './acheivements'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { initState, initialUpgradeState } from './initialGameStates'
 
 export default function Home() {
@@ -12,9 +12,24 @@ export default function Home() {
   let [rotationDegrees, setRotationDegrees] = useState(5);
   let [explosionPosition, setExplosionPosition] = useState(null);
 
+  // States to keep track of clickrate and prevent autoclicker usage
+  const [clicks, setClicks] = useState(0);
+  const [clickRate, setClickRate] = useState(0);
+  const clicksRef = useRef(0);
+
   useEffect(() => {
-    manageAcheivements(gameState);
-  }, [gameState]);
+    clicksRef.current = clicks;
+  }, [clicks]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setClickRate(clicksRef.current);
+      setClicks(0);
+      clicksRef.current = 0;
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const manageAcheivements = (tempGameState) => {
     achievementList.forEach(achievement => {
@@ -64,6 +79,11 @@ export default function Home() {
   }, [gameState.moneyPerSecond]);
 
   const handleAsteroidClick = async (event) => {
+    setClicks(prevClicks => prevClicks + 1);
+    if (clickRate > 15) {
+      window.alert('Click enhancing drugs are illegal in this star system. Come back when you are clean.')
+      return;
+    } 
     let crit = Math.random() >= 0.99;
 
     setGameState(prevState => {
